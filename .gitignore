@@ -1,3 +1,9 @@
 venv/*
 Converted Inventory/*
 Inventory to Convert/*
+venv/include
+venv/Lib
+venv/Scripts
+.idea
+__pycache__
+
