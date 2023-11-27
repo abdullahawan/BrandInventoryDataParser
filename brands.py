@@ -3,7 +3,7 @@
 import pandas
 
 
-class Brands():
+class Brands:
     def __init__(self):
         self.brand = ""
         self.product_type_clothing = "Apparel & Accessories > Clothing"
@@ -32,6 +32,27 @@ class Brands():
             user_location_idx = int(input("Enter the index of the location: "))
 
         self.location = location_list[user_location_idx]
+
+    """
+    Visual representation of the below Size and Quantities data structure
+    Used in the get_size_from_product_dict and get_quantity_from_product_dict 
+    methods below
+    
+        [
+            {size: quantity},
+            {size: quantity},
+            ...
+        ]
+    """
+    def get_size_from_product_dict(self, product_dict):
+        size = list(product_dict)
+        size = str(size[0])
+        return size
+
+    def get_quantity_from_product_dict(self, product_dict):
+        quantity = list(product_dict.values())
+        quantity = quantity[0]
+        return quantity
 
     def convert_to_dataframe(self):
         pass

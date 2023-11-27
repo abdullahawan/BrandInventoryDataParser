@@ -1,9 +1,9 @@
 # Psycho Bunny class file
 import math
 import time
-
 import pandas
 
+from Product import Product
 from brands import Brands
 
 
@@ -26,65 +26,30 @@ class PsychoBunny(Brands):
         list_of_product_rows = []
         for _, product in self.products.items():
             for product_data in product:
-                cleaned_handle = (product_data["Name"].replace(".", "")
-                                  .replace("+", "")
-                                  .replace("-", "")
-                                  .replace("\'", "")
-                                  .replace(" ", "-")
-                                  .strip()
-                                  .lower()
-                                  )
-
                 for product_with_sizes in product_data["Sizes and Quantities"]:
-                    """
-                        [
-                            {size: quantity},
-                            {size: quantity},
-                            ...
-                        ]
-                    """
-                    size = list(product_with_sizes)
-                    size = str(size[0])
-                    quantity = list(product_with_sizes.values())
-                    quantity = quantity[0]
+                    # get the size and quantity data from the dict contained within the list
+                    size = self.get_size_from_product_dict(product_dict=product_with_sizes)
+                    quantity = self.get_quantity_from_product_dict(product_dict=product_with_sizes)
 
-                    product_row_data = {
-                        "Handle": cleaned_handle,
-                        "Title": product_data["Name"],
-                        "Body (HTML)": "",
-                        "Description": product_data["Description"],
-                        "Location": self.location,
-                        "Vendor": self.brand,
-                        "Tags": product_data["Tag"],
-                        "Type": "",
-                        "Product Category": self.product_type_clothing,
-                        "Published": "false",
-                        "status": "active",
-                        "Option1 Name": "Size",
-                        "Option1 Value": size,
-                        "Option2 Name": "Color",
-                        "Option2 Value": product_data["Color"],
-                        "Option3 Name": "",
-                        "Option3 Value": "",
-                        "Variant SKU": product_data["sku"],
-                        "Variant Grams": "0.0",
-                        "HS Code": "",
-                        "COO": "US",
-                        "Variant Inventory Qty": quantity,
-                        "Variant Inventory Policy": "deny",
-                        "Variant Price": product_data["Retail Price"],
-                        "Cost Per Item": product_data["Cost Price"],
-                        "Variant Inventory Tracker": "shopify",
-                        "Variant Fulfillment Service": "manual",
-                        "Variant Requires Shipping": "false",
-                        "Variant Taxable": "true",
-                        "Variant Weight Unit": "lbs",
-                        "Gift Card": "false",
-                        "Status": "active"
-                    }
+                    product_row_data = Product(
+                        handle=product_data["Name"],
+                        title=product_data["Name"],
+                        description=product_data["Description"],
+                        location=self.location,
+                        vendor=self.brand,
+                        tags=product_data["Tag"],
+                        product_category=self.product_type_clothing,
+                        option1_value=size,  # option 1 is Size by default
+                        option2_value=product_data["Color"],  # option 2 is Color by default
+                        variant_sku=product_data["sku"],
+                        var_inv_qty=quantity,
+                        var_price=product_data["Retail Price"],
+                        var_cost=product_data["Cost Price"]
+                    )
 
+                    # Get the dictionary from the class and overwrite the variable and
                     # add the product row data to data frame
-                    list_of_product_rows.append(product_row_data)
+                    list_of_product_rows.append(product_row_data.get_product_data_dict())
 
         df = pandas.DataFrame(list_of_product_rows)
         self.cleaned_df = df
