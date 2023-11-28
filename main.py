@@ -36,7 +36,6 @@ BRAND_LIST = ["Ksubi", "Psycho Bunny"]
 LOCATIONS = ["14469", "Fairlane", "Corp Registered"]
 
 
-
 def cleanup_folder():
     print("Please choose one of the following folders to clean")
     folder_list = ["./Converted Inventory", "./Inventory to Convert"]
