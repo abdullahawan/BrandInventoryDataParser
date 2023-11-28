@@ -32,7 +32,8 @@ class Product:
                  var_taxable="true",
                  var_weight_unit="lbs",
                  gift_card="false",
-                 status="active"
+                 status="active",
+                 var_barcode=""
                  ):
         self.product_data = {
             "Handle": handle,
@@ -65,7 +66,8 @@ class Product:
             "Variant Taxable": var_taxable,
             "Variant Weight Unit": var_weight_unit,
             "Gift Card": gift_card,
-            "Status": status
+            "Status": status,
+            "Variant Barcode": var_barcode
         }
 
         # Execute the creation, cleanup/modification of data method
