@@ -2,7 +2,7 @@
 import math
 
 from Product import Product
-from brands import Brands
+from Brand_Classes.brands import Brands
 
 
 class Ksubi(Brands):
@@ -11,9 +11,6 @@ class Ksubi(Brands):
         super().__init__(order_id=order_id)
         self.brand = "Ksubi"
         self.brand_parse_type = "NuOrder"
-
-        # Create and set the file output for the object
-        self.create_set_file_output_name(order_id=order_id)
 
     def create_get_product_data_object(self, product_data, size, quantity):
         product = Product(
@@ -43,7 +40,7 @@ class Ksubi(Brands):
             "Description": content["Description"].capitalize(),
             "Color": content["Color"].title(),
             "Cost Price": content["Wholesale (USD)"],
-            "Retail Price": round(content["Wholesale (USD)"] * 1.5, 2),
+            "Retail Price": round(content["Wholesale (USD)"] * 1.5, 2),  # confirm this
             "Sizes and Quantities": []  # size (string) : quantity (integer)
         }
 

@@ -81,6 +81,7 @@ class Product:
                           .replace("+", "")
                           .replace("-", "")
                           .replace("\'", "")
+                          .replace(",", "")
                           .replace(" ", "-")
                           .strip()
                           .lower()

@@ -1,13 +1,12 @@
-# Cult of Individuality class
-
-from Product import Product
+# City Lab class file
 from Brand_Classes.brands import Brands
+from Product import Product
 
 
-class RobertVinoMilano(Brands):
+class CityLab(Brands):
     def __init__(self, order_id):
         super().__init__(order_id=order_id)
-        self.brand = "Robert Vino Milano"
+        self.brand = "City Lab"
         self.brand_parse_type = "Brand Boom"
 
     def create_get_product_data_object(self, product_data, size, quantity):
@@ -15,7 +14,7 @@ class RobertVinoMilano(Brands):
                             handle=product_data["Name"],
                             title=product_data["Name"],
                             description=product_data["Description"],
-                            product_type=product_data["Type"],
+                            tags=product_data["Tag"],
                             location=self.location,
                             vendor=self.brand,
                             product_category=self.product_type_clothing,
@@ -29,17 +28,18 @@ class RobertVinoMilano(Brands):
         return product
 
     def parse_to_dictionary(self, content):
+        description = content["Description"].split("\n")
+        description = "\n".join(description[3:])
         product_info = {
-            "Type": str(content["Type"]).title(),
-            "sku": content["SKU Number"],
+            "Tag": "Core",  # if "ALL" in file, then just use "Core"
+            "sku": content["Style Number"],
             "Name": content["Product Name"].title(),
-            "Description": content["Product Name"].capitalize(),
+            "Description": description.capitalize(),
             "Color": content["Option Name"].title(),
             "Cost Price": content["Sale Price"],
-            "Retail Price": round(content["Sale Price"] * 1.5, 2),  # confirm this
+            "Retail Price": content["MSRP"],  # confirm this
             "Sizes and Quantities": [{content["Size"]: content["QTY"]}]  # size (string) : quantity (integer)
         }
 
         # append finalized product_info dictionary to master dictionary
         return product_info
-

@@ -22,13 +22,14 @@ Brand Class:
 File Methods
 
 os.mkdir(path) - create the file
-os.listdir(path=".") - Returns List contianing the names of entries in the directory given by path argument
+os.listdir(path=".") - Returns List containing the names of entries in the directory given by path argument
 
 
 
 """
 import os
 
+from Brand_Classes.CityLab import CityLab
 from Brand_Classes.Cult import Cult
 from Brand_Classes.Ksubi import Ksubi
 from Brand_Classes.PsychoBunny import PsychoBunny
@@ -53,6 +54,10 @@ def cleanup_folder():
     while folder not in folder_list:
         print("[!] Incorrect index received... please enter the correct index of folder:")
         user_file = input()
+
+    print(f"Removing the following files:")
+    for file in os.listdir(folder):
+        print(f"-- {file}")
 
     for file in os.listdir(folder):
         os.remove(f"./{folder}/{file}")
@@ -134,6 +139,8 @@ if __name__ == '__main__':
                 brand = Cult(order_id=order_id)
             case "Milano":
                 brand = RobertVinoMilano(order_id=order_id)
+            case "City Lab":
+                brand = CityLab(order_id=order_id)
             case _:
                 print("Brand did not exist")
                 exit(1)

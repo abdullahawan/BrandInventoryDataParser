@@ -3,7 +3,7 @@ import math
 import pandas
 
 from Product import Product
-from brands import Brands
+from Brand_Classes.brands import Brands
 
 
 class PsychoBunny(Brands):
@@ -12,9 +12,6 @@ class PsychoBunny(Brands):
         super().__init__(order_id=order_id)
         self.brand = "Psycho Bunny"
         self.brand_parse_type = "NuOrder"
-
-        # Create and set the file output for the object
-        self.create_set_file_output_name(order_id=order_id)
 
     def create_get_product_data_object(self, product_data, size, quantity):
         product = Product(

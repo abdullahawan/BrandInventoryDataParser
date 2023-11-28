@@ -10,9 +10,6 @@ class Cult(Brands):
         self.brand = "Cult of Individuality"
         self.brand_parse_type = "Brand Boom"
 
-        # Create and set the file output for the object
-        self.create_set_file_output_name(order_id=order_id)
-
     def create_get_product_data_object(self, product_data, size, quantity):
         product = Product(
                             handle=product_data["Name"],

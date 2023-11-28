@@ -25,8 +25,6 @@ class Brands:
         self.brand_parse_type = ""
         self.cleaned_df = None
 
-
-
     def print_file_output(self):
         alert_msg(f"File: {self.output_file_name}.csv successfully created.")
 
@@ -104,6 +102,10 @@ class Brands:
         self.cleaned_df = df
 
     def convert_to_shopify_csv(self):
+        # Create and set the file output for the object
+        self.create_set_file_output_name(order_id=self.order_id)
+
+        # convert cleaned data frame to csv
         self.cleaned_df.to_csv(path_or_buf=f"./Converted Inventory/{self.output_file_name}.csv",
                                index=False)
 
@@ -143,16 +145,10 @@ class Brands:
             # append product info to existing dictionary
             self.products[content["Style Number"]].append(product_info)
 
-        print(self.products)
-
     def set_size_and_quantities(self, product_size_qty_list):
         pass
 
     def parse_to_dictionary(self, content):
-        pass
-
-    def save_file(self, file_path):
-        # !!! Implement this logic here
         pass
 
     def create_get_product_data_object(self, product_data, size, quantity):
