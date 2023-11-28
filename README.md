@@ -1,6 +1,7 @@
 **B2B Retail Inventory Data Conversion Program**
 
 Compatible B2B Marketplaces and file types: 
+
     - NuOrder (Excel)
     - Brand Boom (CSV)
 
