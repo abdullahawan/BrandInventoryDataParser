@@ -1,3 +1,5 @@
+import pathlib
+import time
 
 # Class for general brands
 import pandas
@@ -20,9 +22,25 @@ class Brands:
         self.products = {}
         self.output_file_name = ""
         self.location = ""
+        self.brand_parse_type = ""
         self.cleaned_df = None
 
-    def get_location_from_user(self, location_list):
+
+
+    def print_file_output(self):
+        alert_msg(f"File: {self.output_file_name}.csv successfully created.")
+
+    def create_set_file_output_name(self, order_id):
+        # BRAND_OrderID_YYYY_MMM_DD_Shopify
+        local_time = time.localtime()
+        capitalized_brand_name = self.brand.strip().title()
+        local_time_year = local_time.tm_year
+        local_time_month = local_time.tm_mon
+        local_time_day = local_time.tm_mday
+        self.output_file_name = (f"{capitalized_brand_name}_{order_id}_{local_time_year}_{local_time_month}"
+                                 f"_{local_time_day}_Shopify")
+
+    def set_location_from_user(self, location_list):
         print("What location are you updating inventory for?")
         idx = 0
         for location in location_list:
@@ -58,6 +76,9 @@ class Brands:
         quantity = quantity[0]
         return quantity
 
+    def execute_df_conversion(self):
+        self.convert_to_dataframe()
+
     def convert_to_dataframe(self):
         # create empty list for dictionaries
         list_of_product_rows = []
@@ -87,6 +108,44 @@ class Brands:
                                index=False)
 
     def parse_file(self, file_name):
+        excel = pandas.read_excel(io=f"./Inventory to Convert/{file_name}")
+        for label, content in excel.iterrows():
+            # Create a deep copy of the content data frame in which the original
+            # data frame is not mutated
+            content = content.copy(deep=True)
+
+            # Check if style number exists as key in Dictionary
+            if content["Style Number"] not in self.products:
+                # Create and initiate empty list for the dictionary
+                self.products[content["Style Number"]] = []
+
+            # Execute the method to parse content values to dictionary
+            product_info = self.parse_to_dictionary(content=content)
+
+            # append product info to existing dictionary
+            self.products[content["Style Number"]].append(product_info)
+
+    def parse_csv_file(self, file_name):
+        file_path = pathlib.Path(f"./Inventory to Convert/{file_name}")
+        csv = pandas.read_csv(filepath_or_buffer=file_path)
+        for label, content in csv.iterrows():
+            # Create a deep copy of the content data frame in which the original
+            # data frame is not mutated
+            content = content.copy(deep=True)
+            # Check if style number exists as key in Dictionary
+            if content["Style Number"] not in self.products:
+                # Create and initiate empty list for the dictionary
+                self.products[content["Style Number"]] = []
+
+            # Execute the method to parse content values to dictionary
+            product_info = self.parse_to_dictionary(content=content)
+
+            # append product info to existing dictionary
+            self.products[content["Style Number"]].append(product_info)
+
+        print(self.products)
+
+    def set_size_and_quantities(self, product_size_qty_list):
         pass
 
     def parse_to_dictionary(self, content):

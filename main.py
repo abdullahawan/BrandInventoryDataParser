@@ -29,10 +29,13 @@ os.listdir(path=".") - Returns List contianing the names of entries in the direc
 """
 import os
 
-from PsychoBunny import PsychoBunny
+from Brand_Classes.Cult import Cult
+from Brand_Classes.Ksubi import Ksubi
+from Brand_Classes.PsychoBunny import PsychoBunny
+from Brand_Classes.RobertVinoMilano import RobertVinoMilano
 from GeneralMethods import alert_msg
 
-BRAND_LIST = ["Ksubi", "Psycho Bunny"]
+# BRAND_LIST = ["Ksubi", "Psycho Bunny"]
 LOCATIONS = ["14469", "Fairlane", "Corp Registered"]
 
 
@@ -74,6 +77,7 @@ if __name__ == '__main__':
     while continue_program_flag:
         # Welcome Message + Warning
         alert_msg("Please ensure all Excel files are closed")
+
         # Get list of files/folders in directory
         list_of_dir = os.listdir()
 
@@ -103,15 +107,6 @@ if __name__ == '__main__':
         # Save file name in local variable
         file = list_of_inventory_to_convert[user_file_to_convert_index]
 
-        # # Get Brand from User
-        # counter = 0
-        # for brand in BRAND_LIST:
-        #     print(f"{counter} - {brand}")
-        #     counter += 1
-        #
-        # # Get the index of the brand user wants to convert
-        # user_brand_index = int(input("Enter the index of the brand you want to convert: "))
-
         # Output current task to user:
         alert_msg("Parsing file name")
 
@@ -123,7 +118,7 @@ if __name__ == '__main__':
 
         # Output current task to user:
         alert_msg("Retrieved brand name and order id from file")
-        alert_msg(f"Brand: {brand_name} \nOrder_ID: {order_id}")
+        alert_msg(f"\nBrand: {brand_name} \nOrder_ID: {order_id}")
 
         # Outer scoped Brand class variable
         # Output current task to user:
@@ -131,10 +126,14 @@ if __name__ == '__main__':
         brand = None
         match brand_name:
             case "Ksubi":
-                # brand = Ksubi()
+                brand = Ksubi(order_id=order_id)
                 pass
             case "Psycho Bunny":
                 brand = PsychoBunny(order_id=order_id)
+            case "Cult" | "Cult of Individuality":
+                brand = Cult(order_id=order_id)
+            case "Milano":
+                brand = RobertVinoMilano(order_id=order_id)
             case _:
                 print("Brand did not exist")
                 exit(1)
@@ -143,16 +142,23 @@ if __name__ == '__main__':
         alert_msg("Created Brand Object")
 
         alert_msg("Parsing File...")
-        brand.parse_file(list_of_inventory_to_convert[user_file_to_convert_index])
+        file_name = list_of_inventory_to_convert[user_file_to_convert_index]
+        match brand.brand_parse_type:
+            case "NuOrder":
+                brand.parse_file(file_name=file_name)
+            case "Brand Boom":
+                brand.parse_csv_file(file_name=file_name)
 
         alert_msg("Retrieving location from User...")
-        brand.get_location_from_user(LOCATIONS)
+        brand.set_location_from_user(LOCATIONS)
 
         alert_msg("Converting file data to Shopify data frame...")
         brand.convert_to_dataframe()
 
         alert_msg("Exporting to CSV file...")
         brand.convert_to_shopify_csv()
+
+        brand.print_file_output()
 
         # Ask user if they want to clean up any folder
         print("Would you like to cleanup either of the folders?")
