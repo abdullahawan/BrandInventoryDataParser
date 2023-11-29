@@ -1,5 +1,9 @@
 # Product row data class
 
+import re
+import string
+
+
 class Product:
     def __init__(self,
                  handle="",
@@ -36,9 +40,10 @@ class Product:
                  var_barcode=""
                  ):
         self.product_data = {
-            "Handle": handle,
+            "Handle": str(handle) + " " + str(option2_value) + " " + str(variant_sku),
+            # Title + color + style number (will make handle unique)
             "Title": title,
-            "Body (HTML)": body_html,
+            "Body (HTML)": description,  # shopify import editor defaults to Body (HTML) for description
             "Description": description,
             "Location": location,
             "Vendor": vendor,
@@ -77,15 +82,29 @@ class Product:
         self.update_product_handle()
 
     def update_product_handle(self):
-        cleaned_handle = (self.product_data["Handle"].replace(".", "")
-                          .replace("+", "")
+        # # Remove characters we don't want in handle
+        cleaned_handle = (self.product_data["Handle"]
                           .replace("-", "")
+                          .replace("&", "")
+                          .replace("+", "")
                           .replace("\'", "")
+                          .replace("\"", "")
+                          .replace("\\", "")
+                          .replace("/", "")
                           .replace(",", "")
-                          .replace(" ", "-")
+                          .replace("(", "")
+                          .replace(")", "")
+                          .replace(".", "")
                           .strip()
                           .lower()
                           )
+
+        # Remove whitespace within string
+        cleaned_handle = re.sub(' +', ' ', cleaned_handle)
+
+        # Replace remaining whitespaces with dashes
+        cleaned_handle = cleaned_handle.replace(" ", "-")
+
         self.update_product_data(column="Handle", data=cleaned_handle)
 
     def update_product_data(self, column, data):

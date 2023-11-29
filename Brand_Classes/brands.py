@@ -7,10 +7,11 @@ import pandas
 from GeneralMethods import alert_msg
 
 
-class Brands:
+class Brands():
     def __init__(self, order_id):
         self.order_id = order_id
         self.brand = ""
+        self.cleaned_product_rows = []
         self.product_type_clothing = "Apparel & Accessories > Clothing"
         self.product_type_shoes = "Apparel & Accessories > Shoes"
         self.season = ""
@@ -31,12 +32,12 @@ class Brands:
     def create_set_file_output_name(self, order_id):
         # BRAND_OrderID_YYYY_MMM_DD_Shopify
         local_time = time.localtime()
-        capitalized_brand_name = self.brand.strip().title()
+        capitalized_brand_name = self.brand.strip()
         local_time_year = local_time.tm_year
         local_time_month = local_time.tm_mon
         local_time_day = local_time.tm_mday
         self.output_file_name = (f"{capitalized_brand_name}_{order_id}_{local_time_year}_{local_time_month}"
-                                 f"_{local_time_day}_Shopify")
+                                 f"_{local_time_day}_Shopify_{self.location}.csv")
 
     def set_location_from_user(self, location_list):
         print("What location are you updating inventory for?")
@@ -98,20 +99,23 @@ class Brands:
                     # add the product row data to data frame
                     list_of_product_rows.append(product_row_data.get_product_data_dict())
 
+        # extend the self.cleaned_product_rows with the list_of_product_rows
+        self.cleaned_product_rows.extend(list_of_product_rows)
+
         # convert to Data Frame and set self.cleaned_df
         df = pandas.DataFrame(list_of_product_rows)
         self.cleaned_df = df
 
     def convert_to_shopify_csv(self):
-        # Create and set the file output for the object
+        # Set the output file name
         self.create_set_file_output_name(order_id=self.order_id)
 
         # convert cleaned data frame to csv
-        self.cleaned_df.to_csv(path_or_buf=f"./Converted Inventory/{self.output_file_name}.csv",
+        self.cleaned_df.to_csv(path_or_buf=f"./Converted Products/{self.output_file_name}",
                                index=False)
 
     def parse_file(self, file_name):
-        excel = pandas.read_excel(io=f"./Inventory to Convert/{file_name}")
+        excel = pandas.read_excel(io=f"./Products to Convert/{file_name}")
         for label, content in excel.iterrows():
             # Create a deep copy of the content data frame in which the original
             # data frame is not mutated
@@ -129,7 +133,7 @@ class Brands:
             self.products[content["Style Number"]].append(product_info)
 
     def parse_csv_file(self, file_name):
-        file_path = pathlib.Path(f"./Inventory to Convert/{file_name}")
+        file_path = pathlib.Path(f"./Products to Convert/{file_name}")
         csv = pandas.read_csv(filepath_or_buffer=file_path)
         for label, content in csv.iterrows():
             # Create a deep copy of the content data frame in which the original
@@ -145,6 +149,9 @@ class Brands:
 
             # append product info to existing dictionary
             self.products[content["Style Number"]].append(product_info)
+
+    def get_product_row_list(self):
+        return self.cleaned_product_rows
 
     def set_size_and_quantities(self, product_size_qty_list):
         pass
