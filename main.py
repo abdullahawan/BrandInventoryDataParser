@@ -119,28 +119,18 @@ def export_merged_list_to_csv(data_list, folder):
 
 
 def cleanup_folder():
-    print("Please choose one of the following folders to clean")
-    folder_list = ["Converted Products", "Products to Convert", "Converted Inventory"]
-    counter = 0
+    alert_msg("Force cleaning all files within 'Converted Inventory' and 'Converted Products'...")
+    folder_list = ["Converted Products", "Converted Inventory"]
 
     for folder in folder_list:
-        print(f"{counter} - {folder}")
-        counter += 1
+        alert_msg(f"Removing the following files from folder {folder}:")
+        for file in os.listdir(folder):
+            print(f"-- {file}")
 
-    user_folder = int(input("Enter the index of the folder to cleanup:"))
-    folder = folder_list[user_folder]
-    while folder not in folder_list:
-        print("[!] Incorrect index received... please enter the correct index of folder:")
-        user_folder = input()
+        for file in os.listdir(folder):
+            os.remove(f"./{folder}/{file}")
 
-    print(f"Removing the following files:")
-    for file in os.listdir(folder):
-        print(f"-- {file}")
-
-    for file in os.listdir(folder):
-        os.remove(f"./{folder}/{file}")
-
-    print(f"[!] Completed folder {folder} cleanup...")
+        alert_msg(f"Completed folder {folder} cleanup...")
 
 
 def parse_file_name(file):
