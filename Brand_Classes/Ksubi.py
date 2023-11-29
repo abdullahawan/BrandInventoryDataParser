@@ -40,7 +40,7 @@ class Ksubi(Brands):
             "Description": content["Description"].capitalize(),
             "Color": content["Color"].title(),
             "Cost Price": content["Wholesale (USD)"],
-            "Retail Price": round(content["Wholesale (USD)"] * 1.5, 2),  # confirm this
+            "Retail Price": round(content["Wholesale (USD)"] * 1.5, 2),  # Ksubi margin is 50%
             "Sizes and Quantities": []  # size (string) : quantity (integer)
         }
 

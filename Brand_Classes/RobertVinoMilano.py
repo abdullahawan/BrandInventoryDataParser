@@ -36,7 +36,7 @@ class RobertVinoMilano(Brands):
             "Description": content["Product Name"].capitalize(),
             "Color": content["Option Name"].title(),
             "Cost Price": content["Sale Price"],
-            "Retail Price": round(content["Sale Price"] * 1.5, 2),  # confirm this
+            "Retail Price": round(content["Sale Price"] * 2.2, 2),  # Milano margin is 120%
             "Sizes and Quantities": [{content["Size"]: content["QTY"]}]  # size (string) : quantity (integer)
         }
 

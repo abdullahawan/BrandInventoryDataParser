@@ -26,7 +26,7 @@ class Brands:
         self.cleaned_df = None
 
     def print_file_output(self):
-        alert_msg(f"File: {self.output_file_name}.csv successfully created.")
+        alert_msg(f"File: {self.output_file_name}.csv successfully created.\n\n")
 
     def create_set_file_output_name(self, order_id):
         # BRAND_OrderID_YYYY_MMM_DD_Shopify
@@ -98,6 +98,7 @@ class Brands:
                     # add the product row data to data frame
                     list_of_product_rows.append(product_row_data.get_product_data_dict())
 
+        # convert to Data Frame and set self.cleaned_df
         df = pandas.DataFrame(list_of_product_rows)
         self.cleaned_df = df
 

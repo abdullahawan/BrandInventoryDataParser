@@ -5,13 +5,16 @@ Templates
 
 Larger purposes of the application
 1) Check if the relevant folders/files exist
-2) Let the user choose the file that they want to convert
-    2a) The output folder should exist, if it doesn't create it
-3) Let the user choose the output file name (automate this)
-    3a) Output the list of files with names and indexes, user should be able to choose the index
+2) Ask the user if it's a "single" or "batch" convesion
+    2a) if it's single, allow the user to choose the file and repeat program if necessary
+    2b) if it's batch, then do a batch conversion of all files in the Inventory to Convert folder
+3) Let the user choose the file that they want to convert
+    3a) The output folder should exist, if it doesn't create it
+4) Let the user choose the output file name (automate this)
+    4a) Output the list of files with names and indexes, user should be able to choose the index
         of the file they want
-    3a) Automate by doing the following format BRAND_YYYY_MMM_DD_Shopify
-4) Automatically determine the brand and parse based off the brand's specific output format
+    4a) Automate by doing the following format BRAND_YYYY_MMM_DD_Shopify
+5) Automatically determine the brand and parse based off the brand's specific output format
 
 Brand Parsing:
 Brand Class:
@@ -28,6 +31,8 @@ os.listdir(path=".") - Returns List containing the names of entries in the direc
 
 """
 import os
+
+import pandas
 
 from Brand_Classes.CityLab import CityLab
 from Brand_Classes.Cult import Cult
@@ -53,7 +58,7 @@ def cleanup_folder():
     folder = folder_list[user_folder]
     while folder not in folder_list:
         print("[!] Incorrect index received... please enter the correct index of folder:")
-        user_file = input()
+        user_folder = input()
 
     print(f"Removing the following files:")
     for file in os.listdir(folder):
@@ -77,89 +82,79 @@ def parse_file_name(file):
 
 
 if __name__ == '__main__':
-    continue_program_flag = True
+    # Welcome Message + Warning
+    alert_msg("Please ensure all Excel files are closed")
 
-    while continue_program_flag:
-        # Welcome Message + Warning
-        alert_msg("Please ensure all Excel files are closed")
+    # Get list of files/folders in directory
+    list_of_dir = os.listdir()
 
-        # Get list of files/folders in directory
-        list_of_dir = os.listdir()
+    # Check if output folder exists
+    if "Converted Inventory" not in list_of_dir:
+        # create if it doesn't exist
+        os.mkdir(path="./Converted Inventory")
 
-        # Check if output folder exists
-        if "Converted Inventory" not in list_of_dir:
-            os.mkdir(path="./Converted Inventory")
+    # Check if Input folder exists
+    if "Inventory to Convert" not in list_of_dir:
+        # create if it doesn't exist
+        os.mkdir(path="./Inventory to Convert")
 
-        # Check if Input folder exists
-        if "Inventory to Convert" not in list_of_dir:
-            os.mkdir(path="./Inventory to Convert")
+    # Get list of files in "Inventory to Convert"
+    list_of_inventory_to_convert = os.listdir(path="./Inventory to Convert")
 
-        # Get list of files in "Inventory to Convert"
-        list_of_inventory_to_convert = os.listdir(path="./Inventory to Convert")
+    # if list_of_inventory_to_convert:
+    #     counter = 0
+    #     for list_of_inventory in list_of_inventory_to_convert:
+    #         print(f"{counter} - {list_of_inventory}")
+    #         counter += 1
+    #
+    #     user_file_to_convert_index = int(input("Enter the index of the file you choose to convert: "))
+    # else:
+    #     alert_msg("No inventory files in folder")
+    #     alert_msg("Exiting program...")
+    #     exit(0)
 
-        if list_of_inventory_to_convert:
-            counter = 0
-            for list_of_inventory in list_of_inventory_to_convert:
-                print(f"{counter} - {list_of_inventory}")
-                counter += 1
+    # List of output file names
+    created_files = []
 
-            user_file_to_convert_index = int(input("Enter the index of the file you choose to convert: "))
-        else:
-            alert_msg("No inventory files in folder")
-            alert_msg("Exiting program...")
-            exit(0)
-
-        # Save file name in local variable
-        file = list_of_inventory_to_convert[user_file_to_convert_index]
-
-        # Output current task to user:
-        alert_msg("Parsing file name")
-
+    # Loop through all files in the inventory to convert folder
+    for inv_file in list_of_inventory_to_convert:
         # Parse the file name string and get the brand_name and order_id as a tuple
-        brand_name, order_id = parse_file_name(file=file)
+        brand_name, order_id = parse_file_name(file=inv_file)
 
         # clean up brand_name string
         brand_name = brand_name.strip().title()
 
         # Output current task to user:
         alert_msg("Retrieved brand name and order id from file")
-        alert_msg(f"\nBrand: {brand_name} \nOrder_ID: {order_id}")
+        print(f"Brand: {brand_name} \nOrder_ID: {order_id}")
 
         # Outer scoped Brand class variable
-        # Output current task to user:
-        alert_msg("Creating Brand Object...")
         brand = None
         match brand_name:
+            case "City Lab":
+                brand = CityLab(order_id=order_id)
+            case "Cult" | "Cult of Individuality":
+                brand = Cult(order_id=order_id)
             case "Ksubi":
                 brand = Ksubi(order_id=order_id)
                 pass
             case "Psycho Bunny":
                 brand = PsychoBunny(order_id=order_id)
-            case "Cult" | "Cult of Individuality":
-                brand = Cult(order_id=order_id)
             case "Milano":
                 brand = RobertVinoMilano(order_id=order_id)
-            case "City Lab":
-                brand = CityLab(order_id=order_id)
-            case _:
+            case _: # default case, brand does not exist
                 print("Brand did not exist")
                 exit(1)
 
-        # Output current task to user:
-        alert_msg("Created Brand Object")
-
         alert_msg("Parsing File...")
-        file_name = list_of_inventory_to_convert[user_file_to_convert_index]
         match brand.brand_parse_type:
             case "NuOrder":
-                brand.parse_file(file_name=file_name)
+                brand.parse_file(file_name=inv_file)
             case "Brand Boom":
-                brand.parse_csv_file(file_name=file_name)
+                brand.parse_csv_file(file_name=inv_file)
 
         alert_msg("Retrieving location from User...")
         brand.set_location_from_user(LOCATIONS)
-
-        alert_msg("Converting file data to Shopify data frame...")
         brand.convert_to_dataframe()
 
         alert_msg("Exporting to CSV file...")
@@ -167,26 +162,28 @@ if __name__ == '__main__':
 
         brand.print_file_output()
 
-        # Ask user if they want to clean up any folder
-        print("Would you like to cleanup either of the folders?")
-        user_cleanup_choice = input("y/n: ")
-        user_cleanup_choice = user_cleanup_choice.lower().strip()
+        # append brand output file name to list of created files
+        created_files.append(brand.output_file_name)
 
-        # if choice does not start with 'y' or 'n' then loop since input is incorrect
-        # while user_cleanup_choice != 'y' or user_cleanup_choice != 'n':
-        #     print("Incorrect value received, please input either 'y' or 'n':")
-        #     user_cleanup_choice = input("y/n: ").lower().strip()
+    # Ask user if they want to clean up any folder
+    print("Would you like to cleanup either of the folders?")
+    user_cleanup_choice = input("y/n: ")
+    user_cleanup_choice = user_cleanup_choice.lower().strip()
 
-        if user_cleanup_choice.startswith('y'):
-            cleanup_folder()
+    # if choice does not start with 'y' or 'n' then loop since input is incorrect
+    # while user_cleanup_choice != 'y' or user_cleanup_choice != 'n':
+    #     print("Incorrect value received, please input either 'y' or 'n':")
+    #     user_cleanup_choice = input("y/n: ").lower().strip()
 
-        # Ask user if they want to execute the program again
-        print("Would you like to run the program again? y/n: ")
-        user_program_choice = input()
-        user_program_choice = user_program_choice.lower().strip()
+    if user_cleanup_choice.startswith('y'):
+        cleanup_folder()
 
-        if user_program_choice.startswith('n'):
-            continue_program_flag = False
+    # Output list all files created
+    print("="*50)
+    print("Successfully created the following files:")
+    for file in created_files:
+        print(file)
+    print("="*50)
 
     # Program has completed and is exiting
     alert_msg("Completed program execution... program exiting...")
