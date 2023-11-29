@@ -20,8 +20,16 @@ Compatible B2B Marketplaces and file types:
 
 Compatible Brands: 
 
-    - City Lab
+    - Affliction Clothing
+    - Cavit
     - Cult of Individuality
+    - Doctrine Denim
+    - HVMAN
     - Ksubi
-    - Robert Vino Milano
+    - MV Dad Hats
+    - Odd Sox
+    - Privilege Society
     - Psycho Bunny
+    - Robert Vino Milano
+    - SIW
+    - XHostile

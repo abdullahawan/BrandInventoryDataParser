@@ -1,14 +1,15 @@
-# Odd Sox class file
+# PrivilegeSociety class file
+import math
 
 from Product import Product
 from Brand_Classes.brands import Brands
 
 
-class OddSox(Brands):
+class PrivilegeSociety(Brands):
 
     def __init__(self, order_id):
         super().__init__(order_id=order_id)
-        self.brand = "Odd Sox"
+        self.brand = "Privilege Society"
         self.brand_parse_type = "Brand Boom"
 
     def create_get_product_data_object(self, product_data, size, quantity):
@@ -16,32 +17,42 @@ class OddSox(Brands):
                             handle=product_data["Name"],
                             title=product_data["Name"],
                             description=product_data["Description"],
-                            product_type=product_data["Type"],
                             location=self.location,
                             vendor=self.brand,
-                            tags=product_data["Tag"],
                             product_category=self.product_type_clothing,
                             option1_value=size,  # option 1 is Size by default,
-                            option2_name="",  # there is no color or color value for Odd Sox
+                            option2_name=product_data["Color Heading"],
+                            option2_value=product_data["Color"],  # there is no color or color value for Odd Sox
                             variant_sku=product_data["sku"],
                             var_inv_qty=quantity,
                             var_price=product_data["Retail Price"],
                             var_cost=product_data["Cost Price"],
-                            var_barcode=product_data["Barcode"]
                         )
         return product
 
     def parse_to_dictionary(self, content):
+        # set all Nan cells (blank cells) to ""
+        if type(content["Option Name"]) is float:
+            if math.isnan(content["Option Name"]):
+                content["Option Name"] = ""
+                # if color value is "" then set color name to "" too
+                content["Color Heading"] = ""
+        else:
+            content["Color Heading"] = "Color"
+
+        if type(content["Description"]) is float:
+            if math.isnan(content["Description"]):
+                content["Description"] = ""
+
         product_info = {
-            "Type": str(content["Type"]).title(),
-            "Tag": content["Season"],
             "sku": content["Style Number"],
             "Name": content["Product Name"].title(),
-            "Description": content["Product Name"].capitalize(),
+            "Description": content["Description"].capitalize().replace("*", ""),
+            "Color": content["Option Name"].title(),
+            "Color Heading": content["Color Heading"].title(),
             "Cost Price": content["Sale Price"],
-            "Retail Price": round(content["Sale Price"] * 2.165, 2),  # retail price / cost = 2.165 x,
-            "Barcode": content["UPC"],
-            "Sizes and Quantities": [{"O/S": content["QTY"]}]
+            "Retail Price": content["MSRP"],
+            "Sizes and Quantities": [{content["Size"]: content["QTY"]}]
             # size (string) : quantity (integer), Odd Sox sizes are only One Size "O/S"
         }
 

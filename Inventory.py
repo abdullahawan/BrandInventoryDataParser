@@ -4,6 +4,8 @@ import os
 import pathlib
 import pandas
 
+from GeneralMethods import *
+
 
 class Inventory:
     def __init__(self, inv_file):
@@ -13,8 +15,8 @@ class Inventory:
         self.inv_output_file_name = inv_file.split(".")[0].strip() + "_Inventory.csv"
 
     def convert_to_shopify_csv(self):
-        # convert cleaned data frame to csv
-        self.cleaned_inv_df.to_csv(path_or_buf=f"./Converted Inventory/{self.inv_output_file_name}",
+        # convert cleaned data frame to csv /Converted Inventor
+        self.cleaned_inv_df.to_csv(path_or_buf=f"{CONVERTED_INVENTORY_PATH}/{self.inv_output_file_name}",
                                index=False)
 
     def convert_to_inv_dataframe(self):

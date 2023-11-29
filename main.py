@@ -25,18 +25,23 @@ os.listdir(path=".") - Returns List containing the names of entries in the direc
 
 import os
 import time
-
+import shutil
 import pandas
 
+from Brand_Classes.AfflictionClothing import AfflictionClothing
+from Brand_Classes.Cavit import Cavit
 from Brand_Classes.CityLab import CityLab
 from Brand_Classes.Cult import Cult
 from Brand_Classes.DoctrineDenim import DoctrineDenim
+from Brand_Classes.HVMan import HVMan
 from Brand_Classes.Ksubi import Ksubi
 from Brand_Classes.MVDadHats import MVDadHats
 from Brand_Classes.OddSox import OddSox
+from Brand_Classes.PrivilegeSociety import PrivilegeSociety
 from Brand_Classes.PsychoBunny import PsychoBunny
 from Brand_Classes.RobertVinoMilano import RobertVinoMilano
 from Brand_Classes.SIW import SIW
+from Brand_Classes.XHostile import XHostile
 from GeneralMethods import *
 from Inventory import Inventory
 
@@ -46,7 +51,7 @@ LOCATIONS = ["14469", "Fairlane", "Corp Registered"]
 
 def convert_product_to_inventory_file(merged_inv_list):
     # for each shopify product template create/export an updated inventory file
-    for file in os.listdir("./Converted Products"):
+    for file in os.listdir(path=CONVERTED_PRODUCTS_PATH):
         inventory = Inventory(file)
 
         # parse csv
@@ -118,7 +123,7 @@ def export_merged_list_to_csv(data_list, folder):
                      index=False)
 
 
-def cleanup_folder():
+def cleanup_folders():
     alert_msg("Force cleaning all files within 'Converted Inventory' and 'Converted Products'...")
     folder_list = ["Converted Products", "Converted Inventory"]
 
@@ -128,9 +133,14 @@ def cleanup_folder():
             print(f"-- {file}")
 
         for file in os.listdir(folder):
-            os.remove(f"./{folder}/{file}")
+            if "Product" in folder:
+                # If product folder then move files to product archive
+                shutil.move(src=f"{CONVERTED_PRODUCTS_PATH}/{file}", dst=f"{ARCHIVED_PRODUCTS_PATH}/{file}")
+            elif "Inventory" in folder:
+                # Else if it's the Inventory folder, move files to inventory archive
+                shutil.move(src=f"{CONVERTED_INVENTORY_PATH}/{file}", dst=f"{ARCHIVED_INVENTORY_PATH}/{file}")
 
-        alert_msg(f"Completed folder {folder} cleanup...")
+        alert_msg(f"Completed folder {folder} cleanup... Files moved to archive")
 
 
 def parse_file_name(file):
@@ -151,33 +161,49 @@ if __name__ == '__main__':
     # Get list of files/folders in directory
     list_of_dir = os.listdir()
 
-    # Check if output folder exists
-    if "Converted Products" not in list_of_dir:
-        # create if it doesn't exist
-        os.mkdir(path="./Converted Products")
-
     # Check if Input folder exists
     if "Products to Convert" not in list_of_dir:
         # create if it doesn't exist
-        os.mkdir(path="./Products to Convert")
+        os.mkdir(path=PRODUCTS_TO_CONVERT_PATH)
+
+    # Check if output folder exists
+    if "Converted Products" not in list_of_dir:
+        # create if it doesn't exist
+        os.mkdir(path=CONVERTED_PRODUCTS_PATH)
 
     # check if inventory output folder exists
     if "Converted Inventory" not in list_of_dir:
         # create if it doesn't exist
-        os.mkdir(path="./Converted Inventory")
+        os.mkdir(path=CONVERTED_INVENTORY_PATH)
+
+    # check if archive folder exists
+    if "Archive" not in list_of_dir:
+        # create
+        os.mkdir(path=ARCHIVE_PATH)
+
+    # check if archived Converted Products exists at the deeper archive level
+    archive_dir = os.listdir(path=ARCHIVE_PATH)
+
+    if "Converted Products" not in archive_dir:
+        # create
+        os.mkdir(path=ARCHIVED_PRODUCTS_PATH)
+
+    if "Converted Inventory" not in archive_dir:
+        # create
+        os.mkdir(path=ARCHIVED_INVENTORY_PATH)
 
     # Ask user if they want to clean up any folder
     border(space_before=2)
-    print("Would you like to cleanup either of the folders?")
+    print("Would you like to cleanup the output folders?")
     user_cleanup_choice = input("y/n: ")
     user_cleanup_choice = user_cleanup_choice.lower().strip()
 
     if user_cleanup_choice.startswith('y'):
-        cleanup_folder()
+        cleanup_folders()
     border()
 
     # Get list of files in "Inventory to Convert"
-    list_of_inventory_to_convert = os.listdir(path="./Products to Convert")
+    list_of_inventory_to_convert = os.listdir(path=PRODUCTS_TO_CONVERT_PATH)
 
     # List of output file names
     created_files = []
@@ -201,24 +227,34 @@ if __name__ == '__main__':
         # Outer scoped Brand class variable
         brand = None
         match brand_name:
+            case "Affliction Clothing":
+                brand = AfflictionClothing(order_id=order_id)
             case "City Lab":
                 brand = CityLab(order_id=order_id)
+            case "Cavit":
+                brand = Cavit(order_id=order_id)
             case "Cult" | "Cult Of Individuality":
                 brand = Cult(order_id=order_id)
             case "Doctrine Denim":
                 brand = DoctrineDenim(order_id=order_id)
+            case "HVMan":
+                brand = HVMan(order_id=order_id)
             case "Ksubi":
                 brand = Ksubi(order_id=order_id)
             case "MV Dad Hats":
                 brand = MVDadHats(order_id=order_id)
             case "Odd Sox":
                 brand = OddSox(order_id=order_id)
+            case "Privilege Society":
+                brand = PrivilegeSociety(order_id=order_id)
             case "Psycho Bunny":
                 brand = PsychoBunny(order_id=order_id)
             case "Milano":
                 brand = RobertVinoMilano(order_id=order_id)
             case "SIW":
                 brand = SIW(order_id=order_id)
+            case "XHostile":
+                brand = XHostile(order_id=order_id)
             case _: # default case, brand does not exist
                 print("Brand did not exist")
                 exit(1)
