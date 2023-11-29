@@ -5,34 +5,25 @@ Templates
 
 Larger purposes of the application
 1) Check if the relevant folders/files exist
-2) Ask the user if it's a "single" or "batch" convesion
-    2a) if it's single, allow the user to choose the file and repeat program if necessary
-    2b) if it's batch, then do a batch conversion of all files in the Inventory to Convert folder
-3) Let the user choose the file that they want to convert
-    3a) The output folder should exist, if it doesn't create it
-4) Let the user choose the output file name (automate this)
-    4a) Output the list of files with names and indexes, user should be able to choose the index
-        of the file they want
-    4a) Automate by doing the following format BRAND_YYYY_MMM_DD_Shopify
-5) Automatically determine the brand and parse based off the brand's specific output format
+2) If the input and output folders don't exist, create them
+3) Automatically scrape the brand and order id information from the file name
+    3a) file name should be in format BRAND_ORDERID.xlsx or BRAND_ORDERID.csv
+4) Automatically determine the brand and parse based off the brand's specific output format
+5) Convert to data frame
+6) Export to Shopify csv format
 
 Brand Parsing:
 Brand Class:
     - Each brand has its own parsing ability inherited from a general parent
     - Should have a method to convert to shopify format
 
-
 File Methods
 
 os.mkdir(path) - create the file
 os.listdir(path=".") - Returns List containing the names of entries in the directory given by path argument
-
-
-
 """
-import os
 
-import pandas
+import os
 
 from Brand_Classes.CityLab import CityLab
 from Brand_Classes.Cult import Cult
@@ -47,7 +38,7 @@ LOCATIONS = ["14469", "Fairlane", "Corp Registered"]
 
 def cleanup_folder():
     print("Please choose one of the following folders to clean")
-    folder_list = ["./Converted Inventory", "./Inventory to Convert"]
+    folder_list = ["Converted Inventory", "Inventory to Convert"]
     counter = 0
 
     for folder in folder_list:
@@ -100,18 +91,6 @@ if __name__ == '__main__':
 
     # Get list of files in "Inventory to Convert"
     list_of_inventory_to_convert = os.listdir(path="./Inventory to Convert")
-
-    # if list_of_inventory_to_convert:
-    #     counter = 0
-    #     for list_of_inventory in list_of_inventory_to_convert:
-    #         print(f"{counter} - {list_of_inventory}")
-    #         counter += 1
-    #
-    #     user_file_to_convert_index = int(input("Enter the index of the file you choose to convert: "))
-    # else:
-    #     alert_msg("No inventory files in folder")
-    #     alert_msg("Exiting program...")
-    #     exit(0)
 
     # List of output file names
     created_files = []
@@ -169,11 +148,6 @@ if __name__ == '__main__':
     print("Would you like to cleanup either of the folders?")
     user_cleanup_choice = input("y/n: ")
     user_cleanup_choice = user_cleanup_choice.lower().strip()
-
-    # if choice does not start with 'y' or 'n' then loop since input is incorrect
-    # while user_cleanup_choice != 'y' or user_cleanup_choice != 'n':
-    #     print("Incorrect value received, please input either 'y' or 'n':")
-    #     user_cleanup_choice = input("y/n: ").lower().strip()
 
     if user_cleanup_choice.startswith('y'):
         cleanup_folder()
