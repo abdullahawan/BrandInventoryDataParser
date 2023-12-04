@@ -24,11 +24,15 @@ Compatible Brands:
     - Cavit
     - Cult of Individuality
     - Doctrine Denim
+    - Embellish NYC
+    - Hudson Outerwear
     - HVMAN
     - Ksubi
     - MV Dad Hats
     - Odd Sox
     - Privilege Society
+    - Pro Standard
+    - PRPS
     - Psycho Bunny
     - Robert Vino Milano
     - SIW
