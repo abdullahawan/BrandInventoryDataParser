@@ -33,11 +33,15 @@ from Brand_Classes.Cavit import Cavit
 from Brand_Classes.CityLab import CityLab
 from Brand_Classes.Cult import Cult
 from Brand_Classes.DoctrineDenim import DoctrineDenim
+from Brand_Classes.EmbellishNYC import EmbellishNYC
 from Brand_Classes.HVMan import HVMan
+from Brand_Classes.HudsonOuterwear import HudsonOuterwear
 from Brand_Classes.Ksubi import Ksubi
 from Brand_Classes.MVDadHats import MVDadHats
 from Brand_Classes.OddSox import OddSox
+from Brand_Classes.PRPS import PRPS
 from Brand_Classes.PrivilegeSociety import PrivilegeSociety
+from Brand_Classes.ProStandard import ProStandard
 from Brand_Classes.PsychoBunny import PsychoBunny
 from Brand_Classes.RobertVinoMilano import RobertVinoMilano
 from Brand_Classes.SIW import SIW
@@ -237,6 +241,10 @@ if __name__ == '__main__':
                 brand = Cult(order_id=order_id)
             case "Doctrine Denim":
                 brand = DoctrineDenim(order_id=order_id)
+            case "Embellish" | "Embellish NYC":
+                brand = EmbellishNYC(order_id=order_id)
+            case "Hudson" | "Hudson Outerwear":
+                brand = HudsonOuterwear(order_id=order_id)
             case "HVMan":
                 brand = HVMan(order_id=order_id)
             case "Ksubi":
@@ -247,6 +255,10 @@ if __name__ == '__main__':
                 brand = OddSox(order_id=order_id)
             case "Privilege Society":
                 brand = PrivilegeSociety(order_id=order_id)
+            case "Pro Standard":
+                brand = ProStandard(order_id=order_id)
+            case "PRPS":
+                brand = PRPS(order_id=order_id)
             case "Psycho Bunny":
                 brand = PsychoBunny(order_id=order_id)
             case "Milano":
@@ -255,7 +267,7 @@ if __name__ == '__main__':
                 brand = SIW(order_id=order_id)
             case "XHostile":
                 brand = XHostile(order_id=order_id)
-            case _: # default case, brand does not exist
+            case _:  # default case, brand does not exist
                 print("Brand did not exist")
                 exit(1)
 
@@ -280,8 +292,6 @@ if __name__ == '__main__':
 
         # append brand output file name to list of created files
         created_files.append(brand.output_file_name)
-
-
 
     # Output list all files created
     border()
